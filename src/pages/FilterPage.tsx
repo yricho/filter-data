@@ -14,6 +14,7 @@ import type {
   District,
   Province,
   Regency,
+  SelectOptionProps,
 } from "../types";
 
 export async function regionLoader() {
@@ -45,15 +46,7 @@ export const SelectComponent = ({
   options,
   disabled,
   icon = <Map className="w-4 h-4" />,
-}: {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  options: { id: number; name: string }[];
-  disabled?: boolean;
-  icon?: React.ReactNode;
-}) => (
+}: SelectOptionProps) => (
   <div className="relative w-full">
     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-400">
       {icon}
@@ -104,18 +97,18 @@ export default function FilterPage() {
     (d: District) => d.id === Number(district),
   );
 
-  const handleProvince = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeProvince = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSearchParams({ province: e.target.value });
   };
 
-  const handleRegency = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeRegency = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSearchParams({
       province,
       regency: e.target.value,
     });
   };
 
-  const handleDistrict = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeDistrict = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSearchParams({
       province,
       regency,
@@ -123,7 +116,7 @@ export default function FilterPage() {
     });
   };
 
-  const handleReset = () => {
+  const handleResetFilter = () => {
     setSearchParams({});
   };
 
@@ -150,7 +143,7 @@ export default function FilterPage() {
               label="Provinsi"
               name="province"
               value={province}
-              onChange={handleProvince}
+              onChange={handleChangeProvince}
               options={provinces}
             />
           </div>
@@ -163,7 +156,7 @@ export default function FilterPage() {
               label="Kota/Kabupaten"
               name="regency"
               value={regency}
-              onChange={handleRegency}
+              onChange={handleChangeRegency}
               options={filteredRegencies}
               icon={<Building2 className="w-4 h-4" />}
               disabled={!province}
@@ -178,7 +171,7 @@ export default function FilterPage() {
               label="Kecamatan"
               name="district"
               value={district}
-              onChange={handleDistrict}
+              onChange={handleChangeDistrict}
               options={filteredDistricts}
               icon={<MapPin className="w-4 h-4" />}
               disabled={!regency}
@@ -186,7 +179,7 @@ export default function FilterPage() {
           </div>
 
           <button
-            onClick={handleReset}
+            onClick={handleResetFilter}
             className="flex w-full border-2 border-blue-500 justify-center gap-2 text-blue-600 py-3 rounded-xl font-semibold hover:bg-blue-50"
           >
             <SlidersHorizontal />
