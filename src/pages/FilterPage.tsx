@@ -9,13 +9,23 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { useLoaderData, useSearchParams } from "react-router-dom";
+import type {
+  BreadcrumbComponentProps,
+  District,
+  Province,
+  Regency,
+} from "../types";
 
 export async function regionLoader() {
   const res = await fetch("/data/indonesia_regions.json");
   return res.json();
 }
 
-export const BreadcrumbComponent = ({ province, regency, district }) => (
+export const BreadcrumbComponent = ({
+  province,
+  regency,
+  district,
+}: BreadcrumbComponentProps) => (
   <div className="breadcrumb flex items-center px-12 py-6 text-sm text-gray-400 bg-white border-b border-gray-200">
     Indonesia
     {province && <ChevronRight className="w-4 h-4 mx-2" />}
@@ -35,6 +45,14 @@ export const SelectComponent = ({
   options,
   disabled,
   icon = <Map className="w-4 h-4" />,
+}: {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: { id: number; name: string }[];
+  disabled?: boolean;
+  icon?: React.ReactNode;
 }) => (
   <div className="relative w-full">
     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-400">
@@ -69,29 +87,35 @@ export default function FilterPage() {
   const district = searchParams.get("district") || "";
 
   const filteredRegencies = regencies.filter(
-    (r) => r.province_id === Number(province),
+    (r: Regency) => r.province_id === Number(province),
   );
 
   const filteredDistricts = districts.filter(
-    (d) => d.regency_id === Number(regency),
+    (d: District) => d.regency_id === Number(regency),
   );
 
-  const selectedProvince = provinces.find((p) => p.id === Number(province));
-  const selectedRegency = regencies.find((r) => r.id === Number(regency));
-  const selectedDistrict = districts.find((d) => d.id === Number(district));
+  const selectedProvince = provinces.find(
+    (p: Province) => p.id === Number(province),
+  );
+  const selectedRegency = regencies.find(
+    (r: Regency) => r.id === Number(regency),
+  );
+  const selectedDistrict = districts.find(
+    (d: District) => d.id === Number(district),
+  );
 
-  const handleProvince = (e) => {
+  const handleProvince = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSearchParams({ province: e.target.value });
   };
 
-  const handleRegency = (e) => {
+  const handleRegency = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSearchParams({
       province,
       regency: e.target.value,
     });
   };
 
-  const handleDistrict = (e) => {
+  const handleDistrict = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSearchParams({
       province,
       regency,
